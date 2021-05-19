@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">medbay</string>
+    <string name="sign_in"><a href="#">Sign Up</a></string>
+
+    <string-array name="specialist">
+        <item>Physician</item>
+        <item>Dentist</item>
+        <item>Dermatologist</item>
+        <item>Cardiologist</item>
+    </string-array>
+</resources>
