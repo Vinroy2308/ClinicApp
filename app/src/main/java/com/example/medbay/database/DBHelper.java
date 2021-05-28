@@ -135,4 +135,23 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery("select * from "+ Medbay.Special.S_TABLE,null);
         return c;
     }
+
+    public Cursor viewData(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("select * from "+Medbay.Doctor.D_TABLE+ " where "+Medbay.Doctor.DS_ID+"='"+id+"'",null);
+        if(c.getCount() > 0) {
+            return c;
+        }
+        return null;
+    }
+    public Cursor readAllData() {
+        String query = "select * from " +Medbay.Special.S_TABLE;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = null;
+        if(db != null) {
+            cursor = db.rawQuery(query,null);
+        }
+        return cursor;
+    }
 }

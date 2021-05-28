@@ -1,6 +1,8 @@
 package com.example.medbay;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.app.ActionBar;
@@ -12,14 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.medbay.database.DBHelper;
 
+import java.util.ArrayList;
+
 public class BookApp extends AppCompatActivity {
 
-    Button b;
+    RecyclerView recyclerview;
     LinearLayout book;
     DBHelper helper;
+    ArrayList<String> spec_id, spec;
+    CustomAdapter customAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -27,29 +34,27 @@ public class BookApp extends AppCompatActivity {
         setContentView(R.layout.activity_book_app);
         book = findViewById(R.id.bookapp);
         helper = new DBHelper(this);
-        Cursor c = helper.viewDoc();
+        spec_id = new ArrayList<>();
+        spec = new ArrayList<>();
 
-        for (int i = 0; i < c.getCount(); i++) {
-            b = new Button(this);
-            c.moveToNext();
-            b.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            b.setText(""+c.getString(1));
-            b.setId(i+1);
-            b.setBackgroundColor(Color.TRANSPARENT);
-            book.addView(b);
-        }
+        readData();
 
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int id = b.getId();
-                String name = b.getText().toString();
-                Intent i = new Intent(getApplicationContext(), BookSpec.class);
-                i.putExtra("id", id);
-                i.putExtra("name",name);
-                startActivity(i);
+
+        customAdapter = new CustomAdapter(this, spec_id, spec);
+        recyclerview.setAdapter(customAdapter);
+        recyclerview.setLayoutManager(new LinearLayoutManager(this));
+
+    }
+
+    void readData() {
+        Cursor cursor = helper.readAllData();
+        if(cursor.getCount() == 0) {
+            Toast.makeText(this, "No Data", Toast.LENGTH_SHORT).show();
+        } else {
+            while (cursor.moveToNext()) {
+                spec_id.add(cursor.getString(0));
+                spec.add(cursor.getString(1));
             }
-        });
-
+        }
     }
 }
