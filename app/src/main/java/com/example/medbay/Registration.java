@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +21,7 @@ import java.net.Inet4Address;
 public class  Registration extends AppCompatActivity {
     Button sign;
     CheckBox doc;
-    EditText name, email, dob, password, phone;
+    EditText name, email, dob, password, phone, specialize;
     DBHelper helper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,9 @@ public class  Registration extends AppCompatActivity {
         dob = findViewById(R.id.dob);
         password = findViewById(R.id.reg_password);
         phone = findViewById(R.id.phone);
+        specialize = findViewById(R.id.spec);
         sign = findViewById(R.id.sign2);
+
 
         helper = new DBHelper(this);
 
@@ -42,17 +45,28 @@ public class  Registration extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = null;
+                int id = 0;
                 String uname = name.getText().toString();
                 String mail = email.getText().toString();
                 String date = dob.getText().toString();
                 String pass = password.getText().toString();
                 String mob = phone.getText().toString();
+                String spec = specialize.getText().toString();
+                boolean status;
+                if(!spec.equals("")) {
+                    id = helper.addSpec(spec);
+                }
 
-                if(doc.isChecked()) {                                        // If doctor checked
+                if(doc.isChecked()) {
+                                                                            // If doctor checked
+                    
+                    status = helper.addDoc(uname, mail,pass,mob,id);
                     i = new Intent(getApplicationContext(),DocHome.class);
-                } else {// If Patient
 
-                    boolean status = helper.addPat(uname,mail,pass,mob,date);
+                } else {
+                                                                            // If Patient
+
+                    status = helper.addPat(uname,mail,pass,mob,date);
                     if(status) {
                         Toast.makeText(Registration.this, "Inserted", Toast.LENGTH_SHORT).show();
                     } else {

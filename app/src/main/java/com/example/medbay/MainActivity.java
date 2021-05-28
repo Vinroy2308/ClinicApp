@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // if you are redirecting from a fragment then use getActivity() as the context.
                 startActivity(new Intent(getApplicationContext(), Login.class));
-
+                finish();
             }
         };
 
