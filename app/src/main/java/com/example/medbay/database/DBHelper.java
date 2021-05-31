@@ -9,7 +9,11 @@ import android.os.strictmode.SqliteObjectLeakedViolation;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.medbay.Doctor1;
+import com.example.medbay.Doctor2;
 import com.example.medbay.Registration;
+
+import java.util.ArrayList;
 
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -130,28 +134,36 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(presc);
     }
 
-    public Cursor viewDoc() {
+    public ArrayList<Doctor1> getAllData() {
+        ArrayList<Doctor1> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("select * from "+ Medbay.Special.S_TABLE,null);
-        return c;
+        Cursor cursor = db.rawQuery("select * from "+Medbay.Special.S_TABLE,null);
+
+        while(cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String spec_name = cursor.getString(1);
+            Doctor1 dc = new Doctor1(id, spec_name);
+
+            arrayList.add(dc);
+        }
+        return arrayList;
     }
 
-    public Cursor viewData(int id) {
+    public ArrayList<Doctor2> getDocData(int id) {
+        ArrayList<Doctor2> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("select * from "+Medbay.Doctor.D_TABLE+ " where "+Medbay.Doctor.DS_ID+"='"+id+"'",null);
-        if(c.getCount() > 0) {
-            return c;
-        }
-        return null;
-    }
-    public Cursor readAllData() {
-        String query = "select * from " +Medbay.Special.S_TABLE;
-        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from "+Medbay.Doctor.D_TABLE+" where "+ Medbay.Doctor.DS_ID+"="+id,null);
+        Cursor c = db.rawQuery("select * from "+Medbay.Special.S_TABLE+" where sid="+id,null);
+        c.moveToNext();
+        while(cursor.moveToNext()) {
+            int did = cursor.getInt(0);
+            String doc_name = cursor.getString(1);
+            String specialize = c.getString(1);
 
-        Cursor cursor = null;
-        if(db != null) {
-            cursor = db.rawQuery(query,null);
+            Doctor2 dc = new Doctor2(did, doc_name, specialize);
+
+            arrayList.add(dc);
         }
-        return cursor;
+        return arrayList;
     }
 }

@@ -1,60 +1,55 @@
 package com.example.medbay;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
-import android.app.ActionBar;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.ListView;
 
+import com.example.medbay.Adapter.SpecAdapter;
 import com.example.medbay.database.DBHelper;
 
 import java.util.ArrayList;
 
 public class BookApp extends AppCompatActivity {
 
-    RecyclerView recyclerview;
     LinearLayout book;
     DBHelper helper;
-    ArrayList<String> spec_id, spec;
-    CustomAdapter customAdapter;
+    ListView l1;
+    ArrayList<Doctor1> arrayList;
+    SpecAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_app);
         book = findViewById(R.id.bookapp);
+        l1 = findViewById(R.id.listView);
         helper = new DBHelper(this);
-        spec_id = new ArrayList<>();
-        spec = new ArrayList<>();
+        arrayList = new ArrayList<>();
+        loadDataInListView();
 
-        readData();
-
-
-        customAdapter = new CustomAdapter(this, spec_id, spec);
-        recyclerview.setAdapter(customAdapter);
-        recyclerview.setLayoutManager(new LinearLayoutManager(this));
-
-    }
-
-    void readData() {
-        Cursor cursor = helper.readAllData();
-        if(cursor.getCount() == 0) {
-            Toast.makeText(this, "No Data", Toast.LENGTH_SHORT).show();
-        } else {
-            while (cursor.moveToNext()) {
-                spec_id.add(cursor.getString(0));
-                spec.add(cursor.getString(1));
+        l1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getApplicationContext(), BookDoc.class);
+                int spec_id = position+1;
+                i.putExtra("spec_id",spec_id);
+                startActivity(i);
             }
-        }
+        });
+
     }
+
+    private void loadDataInListView() {
+        arrayList = helper.getAllData();
+        myAdapter = new SpecAdapter(this,arrayList);
+        l1.setAdapter(myAdapter);
+        myAdapter.notifyDataSetChanged();
+    }
+
 }

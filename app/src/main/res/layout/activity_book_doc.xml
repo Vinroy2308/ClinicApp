@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/book_spec"
-    tools:context=".BookSpec"/>
+    tools:context=".BookDoc">
+    <ListView
+        android:id="@+id/docList"
+        android:layout_width="match_parent"
+        android:layout_height="645dp" />
+</LinearLayout>
