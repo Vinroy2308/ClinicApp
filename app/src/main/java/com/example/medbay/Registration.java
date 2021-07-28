@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.medbay.database.DBHelper;
+import com.example.medbay.database.Medbay;
 
 import java.net.Inet4Address;
 
@@ -40,6 +42,7 @@ public class  Registration extends AppCompatActivity {
 
         helper = new DBHelper(this);
 
+
         // ON Button click
         sign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,26 +59,44 @@ public class  Registration extends AppCompatActivity {
                 if(!spec.equals("")) {
                     id = helper.addSpec(spec);
                 }
+                if (mob.length() == 10) {
+                    if(doc.isChecked()) {
+                        // If doctor checked
 
-                if(doc.isChecked()) {
-                                                                            // If doctor checked
-                    
-                    status = helper.addDoc(uname, mail,pass,mob,id);
-                    i = new Intent(getApplicationContext(),DocHome.class);
+                        status = helper.addDoc(uname, mail,pass,mob,id);
+                        i = new Intent(getApplicationContext(),DocHome.class);
+                        if (status) {
+                            Toast.makeText(Registration.this, "Inserted", Toast.LENGTH_SHORT).show();
 
-                } else {
-                                                                            // If Patient
+                        } else {
+                            Toast.makeText(Registration.this, "Not  inserted", Toast.LENGTH_SHORT).show();
+                        }
+                        //int did = helper.getDocId(uname);
+                        i.putExtra("dname",uname);
+                        //i.putExtra("did",did);
 
-                    status = helper.addPat(uname,mail,pass,mob,date);
-                    if(status) {
-                        Toast.makeText(Registration.this, "Inserted", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(Registration.this, "Not  inserted", Toast.LENGTH_SHORT).show();
+                        // If Patient
+
+                        status = helper.addPat(uname,mail,pass,mob,date);
+                        int pid;
+                        if(status) {
+                            Toast.makeText(Registration.this, "Inserted", Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            Toast.makeText(Registration.this, "Not  inserted", Toast.LENGTH_SHORT).show();
+                        }
+                        pid = helper.getPatId(mail);
+                        i = new Intent(getApplicationContext(),Home.class);
+                        i.putExtra("pid",pid);
+                        i.putExtra("page","registration");
                     }
-                    i = new Intent(getApplicationContext(),Home.class);
+                    i.putExtra("name",uname);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(Registration.this, "Phone number should be equal to 10 digits", Toast.LENGTH_SHORT).show();
                 }
-                i.putExtra("name",uname);
-                startActivity(i);
+
             }
         });
 

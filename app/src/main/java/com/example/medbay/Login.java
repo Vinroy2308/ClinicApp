@@ -51,6 +51,7 @@ public class Login extends AppCompatActivity {
                         int pid = c.getInt(0);
                         String name = c.getString(1);
                         Intent i = new Intent(getApplicationContext(),Home.class);
+                        i.putExtra("page","login");
                         i.putExtra("pid",pid);
                         i.putExtra("name",name);
                         startActivity(i);
@@ -60,7 +61,7 @@ public class Login extends AppCompatActivity {
                     //                              Doctor Login
 
                         c = db.rawQuery("select * from "+Medbay.Doctor.D_TABLE+" where " +
-                                Medbay.Doctor.D_NAME+"='"+mail+"' and "
+                                Medbay.Doctor.D_EMAIL+"='"+mail+"' and "
                                 + Medbay.Doctor.D_PASSWORD+"='"+pass+"'",null);
                         if (c.getCount() > 0) {
                             c.moveToNext();
@@ -89,6 +90,7 @@ public class Login extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
     }
 
 
